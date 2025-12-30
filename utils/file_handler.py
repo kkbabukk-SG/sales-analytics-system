@@ -1,35 +1,59 @@
 def read_sales_data(filename):
-    print("--- File content (line by line) ---")
-
     encodings = ["utf-8", "cp1252", "latin-1"]
 
     for enc in encodings:
         try:
             with open(filename, "r", encoding=enc) as f:
-                # Skip header row
-                header = next(f, None)
-
-                for number, line in enumerate(f, start=1):
-                    line = line.strip()
-
-                    # Skip empty lines
-                    if not line:
-                        continue
-
-                    print(f"{number}: {line}")
-            break
+                next(f, None)  # skip header
+                raw_lines = [line.strip() for line in f if line.strip()]
+                return raw_lines
 
         except UnicodeDecodeError:
             continue
 
         except FileNotFoundError:
             print(f"Error: File not found → {filename}")
-            return
+            return []
 
-    else:
-        print("Failed to decode file with known encodings.")
+    print("Failed to decode file with known encodings.")
+    return []
 
 
-# Call the function
-filename = "C:\Masai project\data\sales_data.txt"
-read_sales_data(filename)
+def parse_transactions(raw_lines):
+    transactions = []
+    
+    for line in raw_lines:
+        parts = line.split("|")
+        if len(parts) != 8:
+            continue
+        
+        (txn_id, date, prod_id, prod_name,
+         qty, price, cust_id, region) = parts
+        
+        prod_name = prod_name.replace(",", " ")
+
+        try:
+            qty = int(qty.replace(",", ""))
+            price = float(price.replace(",", ""))
+        except ValueError:
+            continue
+        
+        transactions.append({
+            "TransactionID": txn_id,
+            "Date": date,
+            "ProductID": prod_id,
+            "ProductName": prod_name.strip(),
+            "Quantity": qty,
+            "UnitPrice": price,
+            "CustomerID": cust_id,
+            "Region": region
+        })
+    
+    return transactions
+
+
+filename = "C:/Masai project/data/sales_data.txt"
+raw_lines = read_sales_data(filename)
+data = parse_transactions(raw_lines)
+
+print(data)
