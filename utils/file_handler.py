@@ -1,145 +1,159 @@
-# ------------------ Step 1: Read file ------------------
+# utils/file_handler.py
+import os
+
+
+# --------------------------------------------------
+# Task 1.1: Read Sales Data
+# --------------------------------------------------
 def read_sales_data(filename):
-    encodings = ["utf-8", "cp1252", "latin-1"]
+    """
+    Reads sales data from file handling encoding issues
+    Returns: list of raw lines (strings)
+    """
+    encodings = ["utf-8", "latin-1", "cp1252"]
 
     for enc in encodings:
         try:
-            with open(filename, "r", encoding=enc) as f:
-                next(f, None)  # skip header
-                raw_lines = [line.strip() for line in f if line.strip()]
-                return raw_lines
+            with open(filename, "r", encoding=enc) as file:
+                lines = file.readlines()
+
+            # Skip header and remove empty lines
+            raw_lines = [line.strip() for line in lines[1:] if line.strip()]
+            return raw_lines
 
         except UnicodeDecodeError:
             continue
-
         except FileNotFoundError:
-            print(f"Error: File not found → {filename}")
+            print(f"❌ File not found: {filename}")
             return []
 
-    print("Failed to decode file with known encodings.")
+    print("❌ Unable to read file with supported encodings.")
     return []
 
-# ------------------ Step 2: Parse transactions ------------------
+
+# --------------------------------------------------
+# Task 1.2: Parse and Clean Data
+# --------------------------------------------------
 def parse_transactions(raw_lines):
+    """
+    Parses raw lines into clean list of dictionaries
+    """
     transactions = []
-    
+
     for line in raw_lines:
         parts = line.split("|")
+
         if len(parts) != 8:
             continue
-        
-        (txn_id, date, prod_id, prod_name,
-         qty, price, cust_id, region) = parts
-        
-        # Replace commas in product names
-        prod_name = prod_name.replace(",", " ")
+
+        txn_id, date, prod_id, prod_name, qty, price, cust_id, region = parts
+
+        # Clean product name (remove commas)
+        prod_name = prod_name.replace(",", "").strip()
 
         try:
             qty = int(qty.replace(",", ""))
             price = float(price.replace(",", ""))
         except ValueError:
             continue
-        
+
         transactions.append({
-            "TransactionID": txn_id,
-            "Date": date,
-            "ProductID": prod_id,
-            "ProductName": prod_name.strip(),
+            "TransactionID": txn_id.strip(),
+            "Date": date.strip(),
+            "ProductID": prod_id.strip(),
+            "ProductName": prod_name,
             "Quantity": qty,
             "UnitPrice": price,
-            "CustomerID": cust_id,
-            "Region": region
+            "CustomerID": cust_id.strip(),
+            "Region": region.strip()
         })
-    
+
     return transactions
 
-# ------------------ Step 3: Validate and filter ------------------
+
+# --------------------------------------------------
+# Task 1.3: Validate and Filter Data
+# --------------------------------------------------
 def validate_and_filter(transactions, region=None, min_amount=None, max_amount=None):
-    required_fields = ['TransactionID', 'Date', 'ProductID', 'ProductName',
-                       'Quantity', 'UnitPrice', 'CustomerID', 'Region']
+    """
+    Validates transactions and applies optional filters
+    Returns: (valid_transactions, invalid_count, filter_summary)
+    """
+    required_fields = [
+        "TransactionID", "Date", "ProductID", "ProductName",
+        "Quantity", "UnitPrice", "CustomerID", "Region"
+    ]
 
     valid_transactions = []
     invalid_count = 0
     total_input = len(transactions)
 
-    # Validation
+    # ---------------- Validation ----------------
     for txn in transactions:
         if not all(field in txn for field in required_fields):
             invalid_count += 1
             continue
-        if txn['Quantity'] <= 0 or txn['UnitPrice'] <= 0:
+
+        if txn["Quantity"] <= 0 or txn["UnitPrice"] <= 0:
             invalid_count += 1
             continue
-        if not (str(txn['TransactionID']).startswith('T') and
-                str(txn['ProductID']).startswith('P') and
-                str(txn['CustomerID']).startswith('C')):
+
+        if not (
+            txn["TransactionID"].startswith("T") and
+            txn["ProductID"].startswith("P") and
+            txn["CustomerID"].startswith("C")
+        ):
             invalid_count += 1
             continue
+
         valid_transactions.append(txn)
 
-    print(f"Total input records: {total_input}")
-    print(f"Invalid records found: {invalid_count}")
-    print(f"Valid records after validation: {len(valid_transactions)}\n")
+    print(f"Total records parsed: {total_input}")
+    print(f"Invalid records removed: {invalid_count}")
+    print(f"Valid records after validation: {len(valid_transactions)}")
 
-    filtered_by_region_count = 0
-    filtered_by_amount_count = 0
-
-    # Filter by region
+    # ---------------- Region Filter ----------------
+    filtered_by_region = 0
     if region:
-        available_regions = set(txn['Region'] for txn in valid_transactions)
+        available_regions = sorted(set(txn["Region"] for txn in valid_transactions))
         print(f"Available regions: {available_regions}")
-        before_region_filter = len(valid_transactions)
-        valid_transactions = [txn for txn in valid_transactions if txn['Region'] == region]
-        filtered_by_region_count = before_region_filter - len(valid_transactions)
-        print(f"Records after filtering by region '{region}': {len(valid_transactions)}")
 
-    # Filter by amount
+        before = len(valid_transactions)
+        valid_transactions = [
+            txn for txn in valid_transactions if txn["Region"] == region
+        ]
+        filtered_by_region = before - len(valid_transactions)
+        print(f"Records after region filter ({region}): {len(valid_transactions)}")
+
+    # ---------------- Amount Filter ----------------
+    filtered_by_amount = 0
     if min_amount is not None or max_amount is not None:
+        amounts = [txn["Quantity"] * txn["UnitPrice"] for txn in valid_transactions]
+        if amounts:
+            print(f"Available transaction amount range: min={min(amounts)}, max={max(amounts)}")
+
+        before = len(valid_transactions)
+
         def within_amount(txn):
-            amt = txn['Quantity'] * txn['UnitPrice']
-            if min_amount is not None and amt < min_amount:
+            amount = txn["Quantity"] * txn["UnitPrice"]
+            if min_amount is not None and amount < min_amount:
                 return False
-            if max_amount is not None and amt > max_amount:
+            if max_amount is not None and amount > max_amount:
                 return False
             return True
 
-        before_amount_filter = len(valid_transactions)
-        valid_transactions = [txn for txn in valid_transactions if within_amount(txn)]
-        filtered_by_amount_count = before_amount_filter - len(valid_transactions)
-        print(f"Records after filtering by amount range: {len(valid_transactions)}\n")
+        valid_transactions = [
+            txn for txn in valid_transactions if within_amount(txn)
+        ]
+        filtered_by_amount = before - len(valid_transactions)
+        print(f"Records after amount filter: {len(valid_transactions)}")
 
-    final_count = len(valid_transactions)
-
-    filter_summary = {
-        'total_input': total_input,
-        'invalid': invalid_count,
-        'filtered_by_region': filtered_by_region_count,
-        'filtered_by_amount': filtered_by_amount_count,
-        'final_count': final_count
+    summary = {
+        "total_input": total_input,
+        "invalid": invalid_count,
+        "filtered_by_region": filtered_by_region,
+        "filtered_by_amount": filtered_by_amount,
+        "final_count": len(valid_transactions)
     }
 
-    return valid_transactions, invalid_count, filter_summary
-
-if __name__ == "__main__":
-
-    filename = "C:/Masai project/data/sales_data.txt"   # <-- update with your actual file path
-
-    # Step 1: Read
-    raw_lines = read_sales_data(filename)
-    print(f"Lines read from file: {len(raw_lines)}")
-
-    # Step 2: Parse
-    transactions = parse_transactions(raw_lines)
-    print(f"Transactions parsed: {len(transactions)}")
-
-    # Step 3: Validate & filter
-    valid_txns, invalid_count, summary = validate_and_filter(
-        transactions,
-        region="APAC",        # or None
-        min_amount=1000,      # or None
-        max_amount=50000      # or None
-    )
-
-    print("\nFilter Summary:")
-    print(summary)
-
+    return valid_transactions, invalid_count, summary

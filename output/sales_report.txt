@@ -1,0 +1,90 @@
+========================================
+SALES ANALYTICS REPORT
+Generated: 2026-01-10 14:55:35.253201
+Records Processed: 71
+========================================
+
+OVERALL SUMMARY
+----------------------------------------
+Total Revenue: ₹3,540,205.00
+Total Transactions: 71
+Average Order Value: ₹49,862.04
+Date Range: 2024-12-01 to 2024-12-30
+
+REGION-WISE PERFORMANCE
+----------------------------------------
+Region | Sales | % of Total | Transactions
+North | ₹1,321,605 | 37.33% | 21
+South | ₹889,332 | 25.12% | 13
+West | ₹848,902 | 23.98% | 19
+East | ₹467,969 | 13.22% | 17
+ | ₹12,397 | 0.35% | 1
+
+TOP 5 PRODUCTS
+----------------------------------------
+1. LaptopPremium | Qty: 27 | Revenue: ₹2,069,871
+2. Monitor | Qty: 30 | Revenue: ₹493,759
+3. Laptop | Qty: 3 | Revenue: ₹184,329
+4. MonitorLED | Qty: 12 | Revenue: ₹132,104
+5. Webcam | Qty: 35 | Revenue: ₹128,187
+
+TOP 5 CUSTOMERS
+----------------------------------------
+1. C004 | Spent: ₹857,124 | Orders: 3
+2. C017 | Spent: ₹762,460 | Orders: 1
+3. C010 | Spent: ₹457,186 | Orders: 3
+4. C024 | Spent: ₹261,848 | Orders: 3
+5. C008 | Spent: ₹216,176 | Orders: 5
+
+DAILY SALES TREND
+----------------------------------------
+2024-12-01 | Revenue: ₹123,969 | Transactions: 3 | Customers: 2
+2024-12-02 | Revenue: ₹882,906 | Transactions: 5 | Customers: 5
+2024-12-03 | Revenue: ₹61,851 | Transactions: 5 | Customers: 5
+2024-12-05 | Revenue: ₹257 | Transactions: 1 | Customers: 1
+2024-12-06 | Revenue: ₹34,072 | Transactions: 1 | Customers: 1
+2024-12-07 | Revenue: ₹204,912 | Transactions: 10 | Customers: 7
+2024-12-08 | Revenue: ₹70,383 | Transactions: 3 | Customers: 3
+2024-12-09 | Revenue: ₹25,339 | Transactions: 4 | Customers: 4
+2024-12-10 | Revenue: ₹1,550 | Transactions: 1 | Customers: 1
+2024-12-11 | Revenue: ₹13,207 | Transactions: 2 | Customers: 2
+2024-12-13 | Revenue: ₹417,923 | Transactions: 3 | Customers: 3
+2024-12-14 | Revenue: ₹45,349 | Transactions: 2 | Customers: 2
+2024-12-15 | Revenue: ₹818,960 | Transactions: 1 | Customers: 1
+2024-12-16 | Revenue: ₹3,020 | Transactions: 1 | Customers: 1
+2024-12-17 | Revenue: ₹114,356 | Transactions: 1 | Customers: 1
+2024-12-18 | Revenue: ₹81,284 | Transactions: 2 | Customers: 1
+2024-12-20 | Revenue: ₹594 | Transactions: 1 | Customers: 1
+2024-12-21 | Revenue: ₹25,992 | Transactions: 1 | Customers: 1
+2024-12-22 | Revenue: ₹89,645 | Transactions: 6 | Customers: 6
+2024-12-23 | Revenue: ₹768 | Transactions: 1 | Customers: 1
+2024-12-24 | Revenue: ₹161,907 | Transactions: 4 | Customers: 4
+2024-12-25 | Revenue: ₹30,455 | Transactions: 4 | Customers: 4
+2024-12-26 | Revenue: ₹34,218 | Transactions: 1 | Customers: 1
+2024-12-27 | Revenue: ₹119,313 | Transactions: 2 | Customers: 2
+2024-12-29 | Revenue: ₹18,005 | Transactions: 3 | Customers: 3
+2024-12-30 | Revenue: ₹159,970 | Transactions: 3 | Customers: 3
+
+API ENRICHMENT SUMMARY
+----------------------------------------
+Total Products Enriched: 0
+Success Rate: 0.00%
+Products Not Enriched:
+- External Hard Drive
+- External Hard Drive1TB
+- Headphones
+- Keyboard
+- KeyboardMechanical
+- Laptop
+- Laptop Charger
+- Laptop Charger65W
+- LaptopPremium
+- Monitor
+- MonitorLED
+- Mouse
+- MouseWireless
+- USB Cable
+- Webcam
+- WebcamHD
+- Wireless Mouse
+- Wireless MouseGaming
